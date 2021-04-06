@@ -4,26 +4,27 @@ class Note {
     this.title = title;
     this.description = description;
     this.date = new Date();
-    this.initRenderNote();
   }
   renderNote() {
     const noteBox = document.querySelector(".note-box");
-    let content = `
+    // Animatioooones
+    setTimeout(
+      () => {
+        let content = `
       <div class='left-side'>
-      <h2>${this.title}</h2>
+      <textarea  class='title' >${this.title}</textarea>
       <p>by Mati ${this.date}</p>
       </div>
        <div class='right-side'>
-       <h4>${this.description}</h4>
+       <textarea class='description'>${this.description}</textarea>
        </div>
       `;
-    noteBox.innerHTML = content;
-  }
-  initRenderNote() {
-    const notesList = document.querySelectorAll(".notes-list-item");
-    const notesListChildren = document.querySelector(".notes-list");
-
-    console.log(notesListChildren.childNodes[0]);
+        noteBox.classList.add("note-box--active");
+        noteBox.innerHTML = content;
+      },
+      noteBox.classList.contains("note-box--active") ? 500 : 0
+    );
+    noteBox.classList.remove("note-box--active");
   }
 }
 
@@ -33,6 +34,7 @@ class Notes {
     this.readFromLocalStorage();
     this.initCreateNewNote();
     this.initRenderSingleNoteOnList();
+    this.initDeleteNote();
   }
   saveNotesInLocalStorage() {
     localStorage.setItem("notes", JSON.stringify(this.notes));
@@ -63,6 +65,8 @@ class Notes {
     this.notes.push(note);
     this.saveNotesInLocalStorage();
     this.renderSingleNoteOnList(note);
+    note.renderNote();
+    this.initDeleteNote();
 
     document.getElementById("title").value = "";
     document.getElementById("description").value = "";
@@ -76,24 +80,39 @@ class Notes {
   renderSingleNoteOnList(note) {
     const singleNoteBox = document.createElement("li");
     const notesList = document.querySelector(".notes-list");
-    singleNoteBox.classList.add("notes-list-item");
 
     let content = `
       <button class="note-btn">
       <p>Note</p>
-      <span class='delete-btn'></span>
+      <span class='delete-btn'><img src="assets/close.svg"></span>
       </button>
       `;
     singleNoteBox.innerHTML = content;
     notesList.appendChild(singleNoteBox);
+    singleNoteBox.classList.add("notes-list-item");
+    singleNoteBox.addEventListener("click", () => {
+      note.renderNote();
+    });
   }
   initRenderSingleNoteOnList() {
-    const notesFromLocalStorage = JSON.parse(localStorage.getItem("notes"));
-    if (notesFromLocalStorage.length > 0) {
-      notesFromLocalStorage.forEach((note) => {
-        this.renderSingleNoteOnList(note);
+    this.notes.forEach((note) => {
+      this.renderSingleNoteOnList(note);
+    });
+  }
+  deleteNote(index) {
+    this.notes = [...this.notes.filter((_, i) => i != index)];
+    this.saveNotesInLocalStorage();
+    this.readFromLocalStorage();
+    location.reload();
+  }
+
+  initDeleteNote() {
+    const deleteBtns = document.querySelectorAll(".delete-btn");
+    deleteBtns.forEach((btn, index) => {
+      btn.addEventListener("click", () => {
+        this.deleteNote(index);
       });
-    }
+    });
   }
 }
 
