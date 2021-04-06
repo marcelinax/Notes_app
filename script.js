@@ -114,6 +114,32 @@ class Notes {
       });
     });
   }
+  editNote(index) {}
+  initEditNote() {}
 }
 
+class NoteForm {
+  constructor() {
+    this.initShowForm();
+    this.initCloseForm();
+  }
+
+  initShowForm() {
+    const btn = document.querySelector(".new-note-btn");
+    btn.addEventListener("click", () => {
+      document
+        .querySelector(".form-section")
+        .classList.toggle("form-section--active");
+    });
+  }
+  initCloseForm() {
+    const btn = document.querySelector(".cancel-btn");
+    btn.addEventListener("click", () => {
+      document
+        .querySelector(".form-section")
+        .classList.toggle("form-section--active");
+    });
+  }
+}
+const form = new NoteForm();
 const notes = new Notes();
