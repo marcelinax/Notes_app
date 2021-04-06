@@ -1,9 +1,9 @@
 "use strict";
 class Note {
-  constructor(title, description) {
+  constructor(title, description, date = new Date()) {
     this.title = title;
     this.description = description;
-    this.date = new Date();
+    this.date = date;
   }
   renderNote() {
     const noteBox = document.querySelector(".note-box");
@@ -13,7 +13,9 @@ class Note {
         let content = `
       <div class='left-side'>
       <textarea class='title' >${this.title}</textarea>
-      <p>by Mati ${this.date}</p>
+      <p><strong>by Mati</strong> ⚫ ${moment(this.date).format(
+        "dddd, Do MMMM YYYY "
+      )} at ${moment(this.date).format("HH:mm")}</p>
       </div>
        <div class='right-side'>
        <textarea class='description'>${this.description}</textarea>
@@ -46,7 +48,11 @@ class Notes {
     if (localStringNotes) {
       const notesShapes = JSON.parse(localStorage.getItem("notes"));
       notesShapes.forEach((noteShape) => {
-        const note = new Note(noteShape.title, noteShape.description);
+        const note = new Note(
+          noteShape.title,
+          noteShape.description,
+          noteShape.date
+        );
         this.notes.push(note);
       });
     }
