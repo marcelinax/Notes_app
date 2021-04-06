@@ -12,7 +12,7 @@ class Note {
       () => {
         let content = `
       <div class='left-side'>
-      <textarea  class='title' >${this.title}</textarea>
+      <textarea class='title' >${this.title}</textarea>
       <p>by Mati ${this.date}</p>
       </div>
        <div class='right-side'>
@@ -30,6 +30,7 @@ class Note {
 
 class Notes {
   notes = [];
+  activeNoteIndex;
   constructor() {
     this.readFromLocalStorage();
     this.initCreateNewNote();
@@ -77,13 +78,13 @@ class Notes {
       this.createNewNote();
     });
   }
-  renderSingleNoteOnList(note) {
+  renderSingleNoteOnList(note, index) {
     const singleNoteBox = document.createElement("li");
     const notesList = document.querySelector(".notes-list");
 
     let content = `
       <button class="note-btn">
-      <p>Note</p>
+      <p>Note${index + 1}</p>
       <span class='delete-btn'><img src="assets/close.svg"></span>
       </button>
       `;
@@ -92,11 +93,15 @@ class Notes {
     singleNoteBox.classList.add("notes-list-item");
     singleNoteBox.addEventListener("click", () => {
       note.renderNote();
+      this.activeNoteIndex = index;
+      setTimeout(() => {
+        this.initEditNote();
+      }, 1000);
     });
   }
   initRenderSingleNoteOnList() {
-    this.notes.forEach((note) => {
-      this.renderSingleNoteOnList(note);
+    this.notes.forEach((note, index) => {
+      this.renderSingleNoteOnList(note, index);
     });
   }
   deleteNote(index) {
@@ -114,8 +119,21 @@ class Notes {
       });
     });
   }
-  editNote(index) {}
-  initEditNote() {}
+  editNote() {
+    const title = document.querySelector(".title").value;
+    const description = document.querySelector(".description").value;
+    this.notes[this.activeNoteIndex].title = title;
+    this.notes[this.activeNoteIndex].description = description;
+    this.saveNotesInLocalStorage();
+  }
+  initEditNote() {
+    document.querySelector(".title").addEventListener("keyup", () => {
+      this.editNote();
+    });
+    document.querySelector(".description").addEventListener("keyup", () => {
+      this.editNote();
+    });
+  }
 }
 
 class NoteForm {
@@ -138,6 +156,7 @@ class NoteForm {
       document
         .querySelector(".form-section")
         .classList.toggle("form-section--active");
+      location.reload();
     });
   }
 }
